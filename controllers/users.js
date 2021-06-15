@@ -1,9 +1,10 @@
 const User = require('../models/user');
-const { handleError } = require('../utils/utils');
+const { handleError, PropertyError } = require('../utils/utils');
 
 const findUser = (req, res) => {
   const { id } = req.params;
   User.findById(id)
+    .orFail(() => new PropertyError('Запрашиваемый пользователь не найден'))
     .then((user) => res.send({ data: user }))
     .catch((err) => handleError(err, res));
 };
@@ -23,14 +24,16 @@ const createUser = (req, res) => {
 
 const updateProfile = (req, res) => {
   const { id, about } = req.body;
-  User.findByIdAndUpdate(id, { about })
+  User.findByIdAndUpdate(id, { about }, { runValidators: true })
+    .orFail(() => new PropertyError('Запрашиваемый пользователь не найден'))
     .then((updatedUser) => res.status(200).send({ data: updatedUser }))
     .catch((err) => handleError(err, res));
 };
 
 const updateAvatar = (req, res) => {
   const { id, avatar } = req.body;
-  User.findByIdAndUpdate(id, { avatar })
+  User.findByIdAndUpdate(id, { avatar }, { runValidators: true })
+    .orFail(() => new PropertyError('Запрашиваемый пользователь не найден'))
     .then((updatedUser) => res.status(200).send({ data: updatedUser }))
     .catch((err) => handleError(err, res));
 };

@@ -16,6 +16,14 @@ app.use((req, res, next) => {
 });
 app.use('/users', userRoutes);
 app.use('/cards', cardRoutes);
+
+app.use((req, res) => {
+  res.status(404).send({ message: 'Запрашиваемый ресурс не найден' });
+});
+app.use((req, res) => {
+  res.status(500).send({ message: 'Ошибка сервера' });
+});
+
 app.listen(port, () => {
   console.log(`We are live on ${port}`);
 });
