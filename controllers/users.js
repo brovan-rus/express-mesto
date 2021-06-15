@@ -28,7 +28,7 @@ const createUser = (req, res) => {
 
 const updateProfile = (req, res) => {
   const { id, about } = req.body;
-  User.updateOne({ _id: id }, { about })
+  User.findByIdAndUpdate(id, { about })
     .then((updatedUser) => res.status(200).send({ data: updatedUser }))
     .catch((e) =>
       res.status(500).send({ message: `При выполнении запроса произошла ошибка ${e}` }),
@@ -37,7 +37,7 @@ const updateProfile = (req, res) => {
 
 const updateAvatar = (req, res) => {
   const { id, avatar } = req.body;
-  User.updateOne({ _id: id }, { avatar })
+  User.findByIdAndUpdate(id, { avatar })
     .then((updatedUser) => res.status(200).send({ data: updatedUser }))
     .catch((e) =>
       res.status(500).send({ message: `При выполнении запроса произошла ошибка ${e}` }),

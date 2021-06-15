@@ -16,25 +16,21 @@ const createCard = (req, res) => {
 
 const deleteCard = (req, res) => {
   const { cardId } = req.params;
-  Card.deleteOne({ cardId })
+  Card.findByIdAndDelete({ cardId })
     .then(() => res.status(200).send({ message: `Карточка ${cardId} удалена` }))
     .catch((e) => res.status(500).send(`Ошибка при обработке запроса ${e}`));
 };
 
-const putLike = (req, res) => {
-  const userId = req.body._id;
-  const { cardId } = req.params;
-  Card.updateOne({ cardId }, { $addToSet: { likes: userId } })
+const likeCard = (req, res) => {
+  Card.findByIdAndUpdate(req.params.cardId, { $addToSet: { likes: req.user._id } }, { new: true })
     .then(() => res.status(201).send({ message: 'Лайк поставлен' }))
     .catch((e) => req.status(500).send(`Ошибка при обработке запроса ${e}`));
 };
 
-const deleteLike = (res, req) => {
-  const userId = req.body._id;
-  const { cardId } = req.params;
-  Card.updateOne({ cardId }, { $pull: { likes: userId } })
+const dislikeCard = (req, res) => {
+  Card.findByIdAndUpdate(req.params.cardId, { $pull: { likes: req.user._id } }, { new: true })
     .then(() => res.status(200).send({ message: 'Лайк удален' }))
     .catch((e) => req.status(400).send(`Ошибка при обработке запроса ${e}`));
 };
 
-module.exports = { getAllCards, putLike, deleteLike, createCard, deleteCard };
+module.exports = { getAllCards, likeCard, dislikeCard, createCard, deleteCard };
