@@ -2,10 +2,12 @@ const port = process.env.PORT || 3000;
 const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
+const helmet = require('helmet');
 const userRoutes = require('./routes/user');
 const cardRoutes = require('./routes/card');
 
 const app = express();
+app.use(helmet());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use((req, res, next) => {
