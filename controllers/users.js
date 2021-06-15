@@ -23,8 +23,25 @@ const createUser = (req, res) => {
     .then((user) => res.status(201).send({ data: user }))
     .catch((e) => {
       res.status(500).send({ message: `При выполнении запроса произошла ошибка ${e}` });
-      console.log(e);
     });
 };
 
-module.exports = { findUser, getAllUsers, createUser };
+const updateProfile = (req, res) => {
+  const { id, about } = req.body;
+  User.updateOne({ _id: id }, { about })
+    .then((updatedUser) => res.status(200).send({ data: updatedUser }))
+    .catch((e) =>
+      res.status(500).send({ message: `При выполнении запроса произошла ошибка ${e}` }),
+    );
+};
+
+const updateAvatar = (req, res) => {
+  const { id, avatar } = req.body;
+  User.updateOne({ _id: id }, { avatar })
+    .then((updatedUser) => res.status(200).send({ data: updatedUser }))
+    .catch((e) =>
+      res.status(500).send({ message: `При выполнении запроса произошла ошибка ${e}` }),
+    );
+};
+
+module.exports = { findUser, getAllUsers, createUser, updateAvatar, updateProfile };
