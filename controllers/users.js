@@ -24,7 +24,7 @@ const createUser = (req, res) => {
 
 const updateProfile = (req, res) => {
   const { id, about } = req.body;
-  User.findByIdAndUpdate(id, { about }, { runValidators: true })
+  User.updateOne({ _id: id }, { about }, { runValidators: true, new: true })
     .orFail(() => new PropertyError('Запрашиваемый пользователь не найден'))
     .then((updatedUser) => res.status(200).send({ data: updatedUser }))
     .catch((err) => handleError(err, res));
@@ -32,7 +32,7 @@ const updateProfile = (req, res) => {
 
 const updateAvatar = (req, res) => {
   const { id, avatar } = req.body;
-  User.findByIdAndUpdate(id, { avatar }, { runValidators: true })
+  User.updateOne({ _id: id }, { avatar }, { runValidators: true, new: true })
     .orFail(() => new PropertyError('Запрашиваемый пользователь не найден'))
     .then((updatedUser) => res.status(200).send({ data: updatedUser }))
     .catch((err) => handleError(err, res));

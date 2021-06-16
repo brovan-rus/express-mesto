@@ -17,21 +17,21 @@ const createCard = (req, res) => {
 
 const deleteCard = (req, res) => {
   const { cardId } = req.params;
-  Card.findByIdAndDelete({ cardId })
+  Card.deleteOne({ _id: cardId })
     .orFail(() => new PropertyError('Запрашиваемая карточка не найдена'))
     .then(() => res.status(200).send({ message: `Карточка ${cardId} удалена` }))
     .catch((err) => handleError(err, res));
 };
 
 const likeCard = (req, res) => {
-  Card.findByIdAndUpdate(req.params.cardId, { $addToSet: { likes: req.user._id } }, { new: true })
+  Card.updateOne({ _id: req.params.cardId }, { $addToSet: { likes: req.user._id } }, { new: true })
     .orFail(() => new PropertyError('Запрашиваемая карточка не найдена'))
     .then(() => res.status(201).send({ message: 'Лайк поставлен' }))
     .catch((err) => handleError(err, res));
 };
 
 const dislikeCard = (req, res) => {
-  Card.findByIdAndUpdate(req.params.cardId, { $pull: { likes: req.user._id } }, { new: true })
+  Card.updateOne({ _id: req.params.cardId }, { $pull: { likes: req.user._id } }, { new: true })
     .orFail(() => new PropertyError('Запрашиваемая карточка не найдена'))
     .then(() => res.status(200).send({ message: 'Лайк удален' }))
     .catch((err) => handleError(err, res));
