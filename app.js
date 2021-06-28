@@ -17,7 +17,7 @@ app.use(cookieParser());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.post('/signin', login);
-app.post('/signup/', createUser);
+app.post('/signup', createUser);
 app.use(auth);
 app.use('/users', userRoutes);
 app.use('/cards', cardRoutes);

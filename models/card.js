@@ -30,7 +30,7 @@ const cardSchema = new mongoose.Schema({
   },
 });
 
-cardSchema.static.checkCardOwner = function (cardId, userId) {
+cardSchema.statics.checkCardOwner = function (cardId, userId) {
   return this.findOne({ _id: cardId }).then((card) => {
     if (!card) {
       return Promise.reject(new PropertyError('Запрашиваемая карточка не найдена'));

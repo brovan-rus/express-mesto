@@ -21,11 +21,14 @@ const getAllUsers = (req, res) => {
 
 const createUser = (req, res) => {
   const { name, about, avatar, email, password } = req.body;
-  bcrypt.hash(password, 10).then((hash) =>
-    User.create({ name, about, avatar, email, password: hash })
-      .then((user) => res.status(201).send({ data: user }))
-      .catch((err) => handleError(err, res)),
-  );
+  bcrypt
+    .hash(password, 10)
+    .then((hash) =>
+      User.create({ name, about, avatar, email, password: hash })
+        .then((user) => res.status(201).send({ data: user }))
+        .catch((err) => handleError(err, res)),
+    )
+    .catch((err) => handleError(err, res));
 };
 
 const updateProfile = (req, res) => {
@@ -44,6 +47,14 @@ const updateAvatar = (req, res) => {
     .catch((err) => handleError(err, res));
 };
 
+const getCurrentUser = (req, res) => {
+  console.log(req);
+  User.findOne({ _id: req.user })
+    .orFail(() => new PropertyError('Запрашиваемый пользователь не найден'))
+    .then((currentUser) => res.status(200).send({ data: currentUser }))
+    .catch((err) => handleError(err, res));
+};
+
 const login = (req, res) => {
   const { email, password } = req.body;
   return User.findUserByCredentials(email, password)
@@ -53,13 +64,24 @@ const login = (req, res) => {
         NODE_ENV === 'production' ? JWT_SECRET : 'dev-secret',
         { expiresIn: '7d' },
       );
-      res.status(200).cookie('jwt', token, {
-        maxAge: 3600000 * 24 * 7,
-        httpOnly: true,
-        sameSite: true,
-      });
+      res
+        .status(200)
+        .send(token)
+        .cookie('jwt', token, {
+          maxAge: 3600000 * 24 * 7,
+          httpOnly: true,
+          sameSite: true,
+        });
     })
     .catch((err) => handleError(err, res));
 };
 
-module.exports = { findUser, getAllUsers, createUser, updateAvatar, updateProfile, login };
+module.exports = {
+  findUser,
+  getAllUsers,
+  createUser,
+  updateAvatar,
+  updateProfile,
+  login,
+  getCurrentUser,
+};
