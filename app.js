@@ -8,6 +8,7 @@ const auth = require('./middlewares/auth');
 const userRoutes = require('./routes/user');
 const cardRoutes = require('./routes/card');
 const { login, createUser } = require('./controllers/users');
+const NotFoundError = require('./errors/NotFoundError');
 
 const port = process.env.PORT || 3000;
 const app = express();
@@ -22,16 +23,6 @@ app.use(auth);
 app.use('/users', userRoutes);
 app.use('/cards', cardRoutes);
 
-app.use((req, res) => {
-  res.status(404).send({ message: 'Запрашиваемый ресурс не найден' });
-});
-app.use((req, res) => {
-  res.status(500).send({ message: 'Ошибка сервера' });
-});
-
-app.listen(port, () => {
-  console.log(`We are live on ${port}`);
-});
 mongoose
   .connect('mongodb://localhost:27017/mestodb', {
     useNewUrlParser: true,
@@ -40,3 +31,17 @@ mongoose
   })
   .then(() => console.log('MongoDB connected'))
   .catch((err) => console.error(`Произошла ошибка подключения к базе данных ${err}`));
+
+app.use((req, res, next) => {
+  next(new NotFoundError('Запрашиваемый ресурс не найден'));
+});
+
+app.use((err, req, res, next) => {
+  console.log(err);
+  const { errCode = 500, message = 'Ошибка сервера' } = err;
+  res.status(errCode).send({ message });
+});
+
+app.listen(port, () => {
+  console.log(`We are live on ${port}`);
+});

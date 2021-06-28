@@ -3,59 +3,60 @@ const bcrypt = require('bcryptjs');
 const { NODE_ENV, JWT_SECRET } = process.env;
 const jwt = require('jsonwebtoken');
 const User = require('../models/user');
-const { handleError, PropertyError } = require('../utils/utils');
+const NotFoundError = require('../errors/NotFoundError');
 
-const findUser = (req, res) => {
+const findUser = (req, res, next) => {
   const { id } = req.params;
   User.findById(id)
-    .orFail(() => new PropertyError('Запрашиваемый пользователь не найден'))
+    .orFail(() => {
+      throw new NotFoundError('Запрашиваемый пользователь не найден');
+    })
     .then((user) => res.send({ data: user }))
-    .catch((err) => handleError(err, res));
+    .catch(next);
 };
 
-const getAllUsers = (req, res) => {
+const getAllUsers = (req, res, next) => {
   User.find({})
     .then((allUsers) => res.status(200).send({ data: allUsers }))
-    .catch((err) => handleError(err, res));
+    .catch(next);
 };
 
-const createUser = (req, res) => {
+const createUser = (req, res, next) => {
   const { name, about, avatar, email, password } = req.body;
   bcrypt
     .hash(password, 10)
     .then((hash) =>
       User.create({ name, about, avatar, email, password: hash })
         .then((user) => res.status(201).send({ data: user }))
-        .catch((err) => handleError(err, res)),
+        .catch(next),
     )
-    .catch((err) => handleError(err, res));
+    .catch(next);
 };
 
-const updateProfile = (req, res) => {
+const updateProfile = (req, res, next) => {
   const { id, about } = req.body;
   User.updateOne({ _id: id }, { about }, { runValidators: true, new: true })
-    .orFail(() => new PropertyError('Запрашиваемый пользователь не найден'))
+    .orFail(() => new NotFoundError('Запрашиваемый пользователь не найден'))
     .then((updatedUser) => res.status(200).send({ data: updatedUser }))
-    .catch((err) => handleError(err, res));
+    .catch(next);
 };
 
-const updateAvatar = (req, res) => {
+const updateAvatar = (req, res, next) => {
   const { id, avatar } = req.body;
   User.updateOne({ _id: id }, { avatar }, { runValidators: true, new: true })
-    .orFail(() => new PropertyError('Запрашиваемый пользователь не найден'))
+    .orFail(() => new NotFoundError('Запрашиваемый пользователь не найден'))
     .then((updatedUser) => res.status(200).send({ data: updatedUser }))
-    .catch((err) => handleError(err, res));
+    .catch(next);
 };
 
-const getCurrentUser = (req, res) => {
-  console.log(req);
+const getCurrentUser = (req, res, next) => {
   User.findOne({ _id: req.user })
-    .orFail(() => new PropertyError('Запрашиваемый пользователь не найден'))
+    .orFail(() => new NotFoundError('Запрашиваемый пользователь не найден'))
     .then((currentUser) => res.status(200).send({ data: currentUser }))
-    .catch((err) => handleError(err, res));
+    .catch(next);
 };
 
-const login = (req, res) => {
+const login = (req, res, next) => {
   const { email, password } = req.body;
   return User.findUserByCredentials(email, password)
     .then((user) => {
@@ -73,7 +74,7 @@ const login = (req, res) => {
           sameSite: true,
         });
     })
-    .catch((err) => handleError(err, res));
+    .catch(next);
 };
 
 module.exports = {

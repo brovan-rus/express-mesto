@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
-const { PropertyError } = require('../utils/utils');
+const NotFoundError = require('../errors/NotFoundError');
+const ForbiddenError = require('../errors/ForbiddenError');
 
 const cardSchema = new mongoose.Schema({
   name: {
@@ -33,10 +34,10 @@ const cardSchema = new mongoose.Schema({
 cardSchema.statics.checkCardOwner = function (cardId, userId) {
   return this.findOne({ _id: cardId }).then((card) => {
     if (!card) {
-      return Promise.reject(new PropertyError('Запрашиваемая карточка не найдена'));
+      return Promise.reject(new NotFoundError('Запрашиваемая карточка не найдена'));
     }
     if (!(card.owner === userId)) {
-      return Promise.reject(new Error('Недостаточно прав для совершения действия'));
+      return Promise.reject(new ForbiddenError('Недостаточно прав для совершения действия'));
     }
     return card;
   });
