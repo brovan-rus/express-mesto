@@ -35,7 +35,7 @@ cardSchema.statics.checkCardOwner = function (cardId, userId) {
     if (!card) {
       return Promise.reject(new PropertyError('Запрашиваемая карточка не найдена'));
     }
-    if (!card.owner === userId) {
+    if (!(card.owner === userId)) {
       return Promise.reject(new Error('Недостаточно прав для совершения действия'));
     }
     return card;
