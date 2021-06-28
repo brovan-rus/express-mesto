@@ -17,8 +17,8 @@ const createCard = (req, res) => {
 
 const deleteCard = (req, res) => {
   const { cardId } = req.params;
-  Card.deleteOne({ _id: cardId })
-    .orFail(() => new PropertyError('Запрашиваемая карточка не найдена'))
+  Card.checkCardOwner(cardId, req.user)
+    .then(() => Card.deleteOne({ _id: cardId }))
     .then(() => res.status(200).send({ message: `Карточка ${cardId} удалена` }))
     .catch((err) => handleError(err, res));
 };
