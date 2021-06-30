@@ -3,7 +3,7 @@ const ValidationError = require('../errors/ValidationError');
 
 const validateEmptyBodyRequest = (req, res, next) => {
   if (Object.keys(req.body).length > 0) {
-    throw new ValidationError();
+    throw new ValidationError('Переданы некорректные данные');
   }
   next();
 };
@@ -19,13 +19,13 @@ const validateCreateCardRequest = (req, res, next) => {
       validator.isURL(link)
     )
   ) {
-    throw new ValidationError();
+    throw new ValidationError('Переданы некорректные данные');
   }
   next();
 };
 
 const validateMongoIdParams = (req, res, next) => {
-  const { id } = req.params;
+  const id = req.params.id ? req.params.id : req.params.cardId;
   if (!validator.isMongoId(id)) {
     throw new ValidationError();
   }
@@ -41,7 +41,7 @@ const validateUpdateProfileRequest = (req, res, next) => {
       (validator.isAlphanumeric(about, 'en-US') || validator.isAlphanumeric(about, 'ru-RU'))
     )
   ) {
-    throw new ValidationError();
+    throw new ValidationError('Переданы некорректные данные');
   }
   next();
 };
@@ -49,24 +49,39 @@ const validateUpdateProfileRequest = (req, res, next) => {
 const validateUpdateAvatarRequest = (req, res, next) => {
   const { avatar } = req.body;
   if (!(Object.keys(req.body).length === 1 && avatar && validator.isURL(avatar))) {
-    throw new ValidationError();
+    throw new ValidationError('Переданы некорректные данные');
   }
   next();
 };
 
-const validateEmailPasswordRequest = (req, res, next) => {
+const validateLoginRequest = (req, res, next) => {
   const { email, password } = req.body;
   if (!(Object.keys(req.body).length === 2 && email && password)) {
-    throw new ValidationError();
+    throw new ValidationError('Переданы некорректные данные');
   }
   next();
 };
 
+const validateRegisterRequest = (req, res, next) => {
+  const { email, password, name, avatar, about } = req.body;
+  if (
+    !(
+      (Object.keys(req.body).length > 1 && Object.keys(req.body).length < 6 && email && password) ||
+      name ||
+      avatar ||
+      about
+    )
+  ) {
+    throw new ValidationError('Переданы некорректные данные');
+  }
+  next();
+};
 module.exports = {
   validateEmptyBodyRequest,
   validateCreateCardRequest,
   validateMongoIdParams,
   validateUpdateProfileRequest,
   validateUpdateAvatarRequest,
-  validateEmailPasswordRequest,
+  validateLoginRequest,
+  validateRegisterRequest,
 };

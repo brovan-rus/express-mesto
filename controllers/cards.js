@@ -1,8 +1,5 @@
-const validator = require('validator');
-
 const Card = require('../models/card');
 const NotFoundError = require('../errors/NotFoundError');
-const ValidationError = require('../errors/ValidationError');
 
 const getAllCards = (req, res, next) => {
   Card.find({})
@@ -20,6 +17,7 @@ const createCard = (req, res, next) => {
 
 const deleteCard = (req, res, next) => {
   const { cardId } = req.params;
+  // Проверка собственника карточки осуществляется методом схемы Cards, записанным его в свойстве statics
   Card.checkCardOwner(cardId, req.user)
     .then(() => Card.deleteOne({ _id: cardId }))
     .then(() => res.status(200).send({ message: `Карточка ${cardId} удалена` }))

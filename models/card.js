@@ -12,6 +12,11 @@ const cardSchema = new mongoose.Schema({
   link: {
     type: String,
     required: true,
+    validate: {
+      validator(v) {
+        return /https?:\/{2}[\w\-._~:/?#[\]@!$&'()*+,;=]{1,}/gi.test(v);
+      },
+    },
   },
   owner: {
     type: mongoose.Schema.Types.ObjectId,
@@ -36,7 +41,7 @@ cardSchema.statics.checkCardOwner = function (cardId, userId) {
     if (!card) {
       return Promise.reject(new NotFoundError('Запрашиваемая карточка не найдена'));
     }
-    if (!(card.owner === userId)) {
+    if (!(card.owner.toString() === userId)) {
       return Promise.reject(new ForbiddenError('Недостаточно прав для совершения действия'));
     }
     return card;

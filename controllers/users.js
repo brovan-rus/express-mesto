@@ -4,6 +4,7 @@ const { NODE_ENV, JWT_SECRET } = process.env;
 const jwt = require('jsonwebtoken');
 const User = require('../models/user');
 const NotFoundError = require('../errors/NotFoundError');
+const DataConflictError = require('../errors/DataConflictError');
 
 const findUser = (req, res, next) => {
   const { id } = req.params;
@@ -26,11 +27,16 @@ const createUser = (req, res, next) => {
   bcrypt
     .hash(password, 10)
     .then((hash) =>
-      User.create({ email, password: hash })
+      User.create({ email, about, avatar, name, password: hash })
         .then(() => res.status(201).send({ data: { name, about, avatar, email } }))
         .catch(next),
     )
-    .catch(next);
+    .catch((err) => {
+      if (err.name === 'MongoError' && err.code === 11000) {
+        next(new DataConflictError('Пользователь с данным email уже существует'));
+      }
+      next(err);
+    });
 };
 
 const updateProfile = (req, res, next) => {
