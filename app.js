@@ -1,4 +1,5 @@
 require('dotenv').config();
+const { errors } = require('celebrate');
 const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
@@ -36,6 +37,8 @@ mongoose
 app.use((req, res, next) => {
   next(new NotFoundError('Запрашиваемый ресурс не найден'));
 });
+
+app.use(errors());
 
 app.use((err, req, res, next) => {
   const { errCode = 500, message = 'Ошибка сервера' } = err;
