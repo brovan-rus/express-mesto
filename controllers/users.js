@@ -22,11 +22,11 @@ const getAllUsers = (req, res, next) => {
 };
 
 const createUser = (req, res, next) => {
-  const { name, about, avatar, email, password } = req.body;
+  const { email, password } = req.body;
   bcrypt
     .hash(password, 10)
     .then((hash) =>
-      User.create({ name, about, avatar, email, password: hash })
+      User.create({ email, password: hash })
         .then((user) => res.status(201).send({ data: user }))
         .catch(next),
     )
@@ -34,16 +34,16 @@ const createUser = (req, res, next) => {
 };
 
 const updateProfile = (req, res, next) => {
-  const { id, about } = req.body;
-  User.updateOne({ _id: id }, { about }, { runValidators: true, new: true })
+  const { about } = req.body;
+  User.updateOne({ _id: req.user }, { about }, { runValidators: true, new: true })
     .orFail(() => new NotFoundError('Запрашиваемый пользователь не найден'))
     .then((updatedUser) => res.status(200).send({ data: updatedUser }))
     .catch(next);
 };
 
 const updateAvatar = (req, res, next) => {
-  const { id, avatar } = req.body;
-  User.updateOne({ _id: id }, { avatar }, { runValidators: true, new: true })
+  const { avatar } = req.body;
+  User.updateOne({ _id: req.user }, { avatar }, { runValidators: true, new: true })
     .orFail(() => new NotFoundError('Запрашиваемый пользователь не найден'))
     .then((updatedUser) => res.status(200).send({ data: updatedUser }))
     .catch(next);

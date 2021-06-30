@@ -1,5 +1,8 @@
+const validator = require('validator');
+
 const Card = require('../models/card');
 const NotFoundError = require('../errors/NotFoundError');
+const ValidationError = require('../errors/ValidationError');
 
 const getAllCards = (req, res, next) => {
   Card.find({})

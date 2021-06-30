@@ -9,6 +9,7 @@ const userRoutes = require('./routes/user');
 const cardRoutes = require('./routes/card');
 const { login, createUser } = require('./controllers/users');
 const NotFoundError = require('./errors/NotFoundError');
+const { validateEmailPasswordRequest } = require('./middlewares/validate');
 
 const port = process.env.PORT || 3000;
 const app = express();
@@ -17,8 +18,8 @@ app.use(helmet());
 app.use(cookieParser());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
-app.post('/signin', login);
-app.post('/signup', createUser);
+app.post('/signin', validateEmailPasswordRequest, login);
+app.post('/signup', validateEmailPasswordRequest, createUser);
 app.use(auth);
 app.use('/users', userRoutes);
 app.use('/cards', cardRoutes);
@@ -37,8 +38,15 @@ app.use((req, res, next) => {
 });
 
 app.use((err, req, res, next) => {
-  console.log(err);
-  const { errCode = 500, message = 'Ошибка сервера' } = err;
+  let { errCode = 500, message = 'Ошибка сервера' } = err;
+  if (err.name === 'CastError' || err.name === 'ValidationError') {
+    errCode = 400;
+    message = 'Переданы некорректные данные';
+  }
+  if (err.name === 'MongoError' && err.code === 11000) {
+    errCode = 409;
+    message = 'Данные вызывают конфликт';
+  }
   res.status(errCode).send({ message });
 });
 
