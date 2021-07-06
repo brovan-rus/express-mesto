@@ -11,6 +11,7 @@ const cardRoutes = require('./routes/card');
 const { login, createUser } = require('./controllers/users');
 const NotFoundError = require('./errors/NotFoundError');
 const { validateLoginRequest, validateRegisterRequest } = require('./middlewares/validate');
+const { requestLogger, errorLogger } = require('./middlewares/logger');
 
 const port = process.env.PORT || 3000;
 const app = express();
@@ -19,6 +20,7 @@ app.use(helmet());
 app.use(cookieParser());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
+app.use(requestLogger);
 app.post('/signin', validateLoginRequest, login);
 app.post('/signup', validateRegisterRequest, createUser);
 app.use(auth);
@@ -38,6 +40,7 @@ app.use((req, res, next) => {
   next(new NotFoundError('Запрашиваемый ресурс не найден'));
 });
 
+app.use(errorLogger);
 app.use(errors());
 
 app.use((err, req, res, next) => {
