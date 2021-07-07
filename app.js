@@ -5,6 +5,7 @@ const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const helmet = require('helmet');
 const cookieParser = require('cookie-parser');
+const cors = require('cors');
 const auth = require('./middlewares/auth');
 const userRoutes = require('./routes/user');
 const cardRoutes = require('./routes/card');
@@ -13,9 +14,15 @@ const NotFoundError = require('./errors/NotFoundError');
 const { validateLoginRequest, validateRegisterRequest } = require('./middlewares/validate');
 const { requestLogger, errorLogger } = require('./middlewares/logger');
 
+const corsOptions = {
+  origin: 'http://example.com',
+  optionsSuccessStatus: 200,
+};
+
 const port = process.env.PORT || 3000;
 const app = express();
 
+app.use(cors(corsOptions));
 app.use(helmet());
 app.use(cookieParser());
 app.use(bodyParser.json());
