@@ -14,9 +14,15 @@ const NotFoundError = require('./errors/NotFoundError');
 const { validateLoginRequest, validateRegisterRequest } = require('./middlewares/validate');
 const { requestLogger, errorLogger } = require('./middlewares/logger');
 
+const whitelist = ['localhost:3000', 'http://project-mesto-brovan.nomoredomains.club/'];
 const corsOptions = {
-  origin: 'http://example.com',
-  optionsSuccessStatus: 200,
+  origin(origin, callback) {
+    if (whitelist.indexOf(origin) !== -1) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
 };
 
 const port = process.env.PORT || 3000;
