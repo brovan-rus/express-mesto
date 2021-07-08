@@ -28,7 +28,7 @@ const corsOptions = {
 const port = process.env.PORT || 3000;
 const app = express();
 
-app.use(cors(corsOptions));
+app.use(cors());
 app.use(helmet());
 app.use(cookieParser());
 app.use(bodyParser.json());
