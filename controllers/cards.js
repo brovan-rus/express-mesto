@@ -32,7 +32,7 @@ const likeCard = (req, res, next) => {
 };
 
 const dislikeCard = (req, res, next) => {
-  Card.updateOne({ _id: req.params.cardId }, { $pull: { likes: req.user._id } }, { new: true })
+  Card.updateOne({ _id: req.params.cardId }, { $pull: { likes: req.user } }, { new: true })
     .orFail(() => new NotFoundError('Запрашиваемая карточка не найдена'))
     .then((updatedCard) => res.status(200).send({ data: updatedCard }))
     .catch(next);
