@@ -51,7 +51,7 @@ const updateAvatar = (req, res, next) => {
   const { avatar } = req.body;
   User.updateOne({ _id: req.user }, { avatar }, { runValidators: true, new: true })
     .orFail(() => new NotFoundError('Запрашиваемый пользователь не найден'))
-    .then((updatedUser) => res.status(200).send({ data: updatedUser }))
+    .then(() => res.status(200).send({ data: avatar }))
     .catch(next);
 };
 
