@@ -27,7 +27,7 @@ const deleteCard = (req, res, next) => {
 const likeCard = (req, res, next) => {
   Card.updateOne({ _id: req.params.cardId }, { $addToSet: { likes: req.user } }, { new: true })
     .orFail(() => new NotFoundError('Запрашиваемая карточка не найдена'))
-    .then(() => res.status(201).send({ message: 'Лайк поставлен' }))
+    .then((updatedCard) => res.status(201).send(updatedCard))
     .catch(next);
 };
 
