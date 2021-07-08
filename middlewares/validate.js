@@ -28,11 +28,12 @@ const validateMongoIdParams = (req, res, next) => {
 
 const validateUpdateProfileRequest = celebrate({
   body: Joi.object().keys({
-    body: Joi.object().keys({
-      about: Joi.string()
-        .regex(/[\wа-яё]/i)
-        .required(),
-    }),
+    about: Joi.string()
+      .regex(/[\wа-яё]/i)
+      .required(),
+    name: Joi.string()
+      .regex(/[\wа-яё]/i)
+      .required(),
   }),
 });
 
