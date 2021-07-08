@@ -40,8 +40,8 @@ const createUser = (req, res, next) => {
 };
 
 const updateProfile = (req, res, next) => {
-  const { about } = req.body;
-  User.updateOne({ _id: req.user }, { about }, { runValidators: true, new: true })
+  const { about, name } = req.body;
+  User.updateOne({ _id: req.user }, { about, name }, { runValidators: true, new: true })
     .orFail(() => new NotFoundError('Запрашиваемый пользователь не найден'))
     .then((updatedUser) => res.status(200).send({ data: updatedUser }))
     .catch(next);
