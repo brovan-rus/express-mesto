@@ -2,8 +2,8 @@ const userRoutes = require('express').Router();
 const {
   validateEmptyBodyRequest,
   validateMongoIdParams,
-  validateUpdateProfileRequest,
-  validateUpdateAvatarRequest,
+  validateProfileUpdate,
+  validateLink,
 } = require('../middlewares/validate');
 const {
   getAllUsers,
@@ -16,7 +16,7 @@ const {
 userRoutes.get('/', validateEmptyBodyRequest, getAllUsers);
 userRoutes.get('/me', validateEmptyBodyRequest, getCurrentUser);
 userRoutes.get('/:id', validateEmptyBodyRequest, validateMongoIdParams, findUser);
-userRoutes.patch('/me', validateUpdateProfileRequest, updateProfile);
-userRoutes.patch('/me/avatar', validateUpdateAvatarRequest, updateAvatar);
+userRoutes.patch('/me', validateProfileUpdate, updateProfile);
+userRoutes.patch('/me/avatar', validateLink, updateAvatar);
 
 module.exports = userRoutes;

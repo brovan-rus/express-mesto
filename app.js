@@ -11,7 +11,7 @@ const userRoutes = require('./routes/user');
 const cardRoutes = require('./routes/card');
 const { login, createUser } = require('./controllers/users');
 const NotFoundError = require('./errors/NotFoundError');
-const { validateLoginRequest, validateRegisterRequest } = require('./middlewares/validate');
+const { validateLogin, validateRegister, validateLink } = require('./middlewares/validate');
 const { requestLogger, errorLogger } = require('./middlewares/logger');
 
 const whitelist = [
@@ -45,8 +45,8 @@ app.get('/crash-test', () => {
     throw new Error('Сервер сейчас упадёт');
   }, 0);
 });
-app.post('/signin', validateLoginRequest, login);
-app.post('/signup', validateRegisterRequest, createUser);
+app.post('/signin', validateLogin, login);
+app.post('/signup', validateRegister, validateLink, createUser);
 app.use(auth);
 app.use('/users', userRoutes);
 app.use('/cards', cardRoutes);

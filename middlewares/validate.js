@@ -9,12 +9,27 @@ const validateEmptyBodyRequest = (req, res, next) => {
   next();
 };
 
-const validateCreateCardRequest = celebrate({
+const validateLink = (req, res, next) => {
+  const link = req.body.avatar ? req.body.avatar : req.body.link;
+  if (link) {
+    if (!validator.isURL(link, { require_protocol: true })) {
+      throw new ValidationError('Переданы некорректные данные');
+    }
+  }
+  next();
+};
+
+const validateCardCreate = celebrate({
   body: Joi.object().keys({
-    name: Joi.string()
-      .regex(/[\wа-яё]/i)
-      .required(),
-    link: Joi.string().uri().required(),
+    name: Joi.string().min(2).max(30).required(),
+    link: Joi.string().required(),
+  }),
+});
+
+const validateProfileUpdate = celebrate({
+  body: Joi.object().keys({
+    name: Joi.string().min(2).max(30).required(),
+    about: Joi.string().min(2).max(30).required(),
   }),
 });
 
@@ -26,46 +41,29 @@ const validateMongoIdParams = (req, res, next) => {
   next();
 };
 
-const validateUpdateProfileRequest = celebrate({
-  body: Joi.object().keys({
-    about: Joi.string()
-      .regex(/[\wа-яё]/i)
-      .required(),
-    name: Joi.string()
-      .regex(/[\wа-яё]/i)
-      .required(),
-  }),
-});
-
-const validateUpdateAvatarRequest = celebrate({
-  body: Joi.object().keys({
-    avatar: Joi.string().uri().required(),
-  }),
-});
-
-const validateLoginRequest = celebrate({
+const validateRegister = celebrate({
   body: Joi.object().keys({
     email: Joi.string().email().required(),
-    password: Joi.string().required().min(3).max(16),
+    password: Joi.string().required().min(3),
+    name: Joi.string().min(2).max(30),
+    about: Joi.string().min(2).max(30),
+    avatar: Joi.string(),
   }),
 });
 
-const validateRegisterRequest = celebrate({
+const validateLogin = celebrate({
   body: Joi.object().keys({
     email: Joi.string().email().required(),
-    password: Joi.string().required().min(3).max(16),
-    name: Joi.string().regex(/[\wа-яё]/i),
-    avatar: Joi.string().uri(),
-    about: Joi.string().regex(/[\wа-яё]/i),
+    password: Joi.string().required().min(3),
   }),
 });
 
 module.exports = {
   validateEmptyBodyRequest,
-  validateCreateCardRequest,
   validateMongoIdParams,
-  validateUpdateProfileRequest,
-  validateUpdateAvatarRequest,
-  validateLoginRequest,
-  validateRegisterRequest,
+  validateProfileUpdate,
+  validateRegister,
+  validateLogin,
+  validateLink,
+  validateCardCreate,
 };
