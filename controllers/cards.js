@@ -25,22 +25,36 @@ const deleteCard = (req, res, next) => {
 };
 
 const likeCard = (req, res, next) => {
-  Card.updateOne({ _id: req.params.cardId }, { $addToSet: { likes: req.user } }, { new: true })
+  Card.findOne({ _id: req.params.cardId })
+    .orFail(() => new NotFoundError('Запрашиваемая карточка не найдена'))
     .then(() => {
-      Card.findOne({ _id: req.params.cardId }).then((updatedCard) => {
-        res.status(201).send({ data: updatedCard });
+      Card.updateOne(
+        { _id: req.params.cardId },
+        { $addToSet: { likes: req.user } },
+        { new: true },
+      ).then(() => {
+        Card.findOne({ _id: req.params.cardId }).then((updatedCard) => {
+          res.status(201).send({ data: updatedCard });
+        });
       });
     })
     .catch(next);
 };
 
 const dislikeCard = (req, res, next) => {
-  Card.updateOne({ _id: req.params.cardId }, { $pull: { likes: req.user } }, { new: true })
-    .then(() =>
-      Card.findOne({ _id: req.params.cardId }).then((updatedCard) =>
-        res.status(200).send({ data: updatedCard }),
-      ),
-    )
+  Card.findOne({ _id: req.params.cardId })
+    .orFail(() => new NotFoundError('Запрашиваемая карточка не найдена'))
+    .then(() => {
+      Card.updateOne(
+        { _id: req.params.cardId },
+        { $pull: { likes: req.user } },
+        { new: true },
+      ).then(() =>
+        Card.findOne({ _id: req.params.cardId }).then((updatedCard) =>
+          res.status(200).send({ data: updatedCard }),
+        ),
+      );
+    })
     .catch(next);
 };
 
