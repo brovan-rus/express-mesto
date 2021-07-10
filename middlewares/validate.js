@@ -15,6 +15,8 @@ const validateLink = (req, res, next) => {
     if (!validator.isURL(link, { require_protocol: true })) {
       throw new ValidationError('Переданы некорректные данные');
     }
+  } else {
+    throw new ValidationError('Переданы некорректные данные');
   }
   next();
 };
