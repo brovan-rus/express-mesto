@@ -10,7 +10,7 @@ const validateEmptyBodyRequest = (req, res, next) => {
 };
 
 const validateRequiredLink = (req, res, next) => {
-  const link = req.body.avatar;
+  const link = req.body.avatar ? req.body.avatar : req.body.link;
   if (link) {
     if (!validator.isURL(link, { require_protocol: true })) {
       throw new ValidationError('Переданы некорректные данные');
@@ -22,7 +22,7 @@ const validateRequiredLink = (req, res, next) => {
 };
 
 const validateLink = (req, res, next) => {
-  const link = req.body.avatar ? req.body.avatar : req.body.link;
+  const link = req.body.avatar;
   if (link) {
     if (!validator.isURL(link, { require_protocol: true })) {
       throw new ValidationError('Переданы некорректные данные');
