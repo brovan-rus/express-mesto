@@ -15,8 +15,8 @@ const { validateLogin, validateRegister, validateLink } = require('./middlewares
 const { requestLogger, errorLogger } = require('./middlewares/logger');
 
 const whitelist = [
-  'http://localhost:3000',
-  'https://localhost:3000',
+  'http://localhost:3001',
+  'https://localhost:3001',
   'http://project-mesto-brovan.nomoredomains.club',
   'https://project-mesto-brovan.nomoredomains.club',
 ];

@@ -2,7 +2,7 @@ const cardRoutes = require('express').Router();
 const {
   validateEmptyBodyRequest,
   validateMongoIdParams,
-  validateLink,
+  validateRequiredLink,
   validateCardCreate,
 } = require('../middlewares/validate');
 const {
@@ -14,7 +14,7 @@ const {
 } = require('../controllers/cards');
 
 cardRoutes.get('/', validateEmptyBodyRequest, getAllCards);
-cardRoutes.post('/', validateCardCreate, validateLink, createCard);
+cardRoutes.post('/', validateCardCreate, validateRequiredLink, createCard);
 cardRoutes.delete('/:cardId', validateEmptyBodyRequest, validateMongoIdParams, deleteCard);
 cardRoutes.put('/:cardId/likes', validateEmptyBodyRequest, validateMongoIdParams, likeCard);
 cardRoutes.delete('/:cardId/likes', validateEmptyBodyRequest, validateMongoIdParams, dislikeCard);

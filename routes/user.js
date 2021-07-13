@@ -3,7 +3,7 @@ const {
   validateEmptyBodyRequest,
   validateMongoIdParams,
   validateProfileUpdate,
-  validateLink,
+  validateRequiredLink,
 } = require('../middlewares/validate');
 const {
   getAllUsers,
@@ -17,6 +17,6 @@ userRoutes.get('/', validateEmptyBodyRequest, getAllUsers);
 userRoutes.get('/me', validateEmptyBodyRequest, getCurrentUser);
 userRoutes.get('/:id', validateEmptyBodyRequest, validateMongoIdParams, findUser);
 userRoutes.patch('/me', validateProfileUpdate, updateProfile);
-userRoutes.patch('/me/avatar', validateLink, updateAvatar);
+userRoutes.patch('/me/avatar', validateRequiredLink, updateAvatar);
 
 module.exports = userRoutes;

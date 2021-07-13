@@ -9,14 +9,24 @@ const validateEmptyBodyRequest = (req, res, next) => {
   next();
 };
 
-const validateLink = (req, res, next) => {
-  const link = req.body.avatar ? req.body.avatar : req.body.link;
+const validateRequiredLink = (req, res, next) => {
+  const link = req.body.avatar;
   if (link) {
     if (!validator.isURL(link, { require_protocol: true })) {
       throw new ValidationError('Переданы некорректные данные');
     }
   } else {
     throw new ValidationError('Переданы некорректные данные');
+  }
+  next();
+};
+
+const validateLink = (req, res, next) => {
+  const link = req.body.avatar ? req.body.avatar : req.body.link;
+  if (link) {
+    if (!validator.isURL(link, { require_protocol: true })) {
+      throw new ValidationError('Переданы некорректные данные');
+    }
   }
   next();
 };
@@ -67,5 +77,6 @@ module.exports = {
   validateRegister,
   validateLogin,
   validateLink,
+  validateRequiredLink,
   validateCardCreate,
 };
